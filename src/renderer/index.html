@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>সালাত রিমাইন্ডার - নামাজের সময়সূচি ও অ্যালার্ম</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+  <!-- কাস্টম ফ্রেমলেস টাইটেল বার -->
+  <header class="titlebar">
+    <div class="titlebar-left">
+      <div class="app-logo">
+        <svg viewBox="0 0 24 24" class="logo-icon" fill="currentColor">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        <span class="logo-text">সালাত রিমাইন্ডার</span>
+      </div>
+      <div class="location-badge" id="headerLocationBadge" title="বর্তমান লোকেশন">
+        <span class="badge-dot"></span>
+        <span id="headerLocationName">ঢাকা, বাংলাদেশ</span>
+      </div>
+    </div>
+
+    <div class="titlebar-center">
+      <div class="header-datetime" id="headerDateTime">
+        <span id="headerHijriDate">১৪৪৭ হিজরি</span> • <span id="headerBanglaDate">শুক্রবার</span> • <span id="headerLiveClock">--:--:--</span>
+      </div>
+    </div>
+
+    <div class="titlebar-right">
+      <button class="win-btn" id="btnMinimize" title="মিনিমাইজ করুন">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 13H5v-2h14v2z"/></svg>
+      </button>
+      <button class="win-btn" id="btnTrayMinimize" title="সিস্টেম ট্রে-তে পাঠান">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+      </button>
+      <button class="win-btn close-btn" id="btnClose" title="বন্ধ করুন (ট্রে-তে থাকবে)">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- প্রধান কন্টেইনার -->
+  <div class="app-layout">
+    <!-- বাম পাশের নেভিগেশন বার -->
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-home" id="navHome">
+          <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
+            <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 4.25c1.24 0 2.25 1.01 2.25 2.25S13.24 11.75 12 11.75 9.75 10.74 9.75 9.5 10.76 7.25 12 7.25z"/>
+          </svg>
+          <span class="nav-label">ওয়াক্ত ও কাউন্টডাউন</span>
+        </button>
+
+        <button class="nav-item" data-tab="tab-calendar" id="navCalendar">
+          <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+          </svg>
+          <span class="nav-label">আজকের সম্পূর্ণ সূচি</span>
+        </button>
+
+        <button class="nav-item" data-tab="tab-qibla" id="navQibla">
+          <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+          <span class="nav-label">কিবলা দিক</span>
+        </button>
+
+        <button class="nav-item" data-tab="tab-settings" id="navSettings">
+          <svg viewBox="0 0 24 24" class="nav-icon" fill="currentColor">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          <span class="nav-label">সেটিংস</span>
+        </button>
+      </nav>
+
+      <!-- সাইডবার ফুটার স্ট্যাটাস -->
+      <div class="sidebar-footer">
+        <div class="sound-quick-toggle" id="btnQuickMute" title="শব্দ অন/অফ করুন">
+          <svg viewBox="0 0 24 24" id="quickMuteIcon" width="18" height="18" fill="currentColor">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+          </svg>
+          <span id="quickMuteText">শব্দ চালু</span>
+        </div>
+        <div class="app-version">সংস্করণ ১.০.০</div>
+      </div>
+    </aside>
+
+    <!-- মূল কন্টেন্ট প্যানেল -->
+    <main class="main-content">
+      
+      <!-- অ্যালার্ম লাইভ পপআপ ব্যানার (যখন আজান বাজে) -->
+      <div class="alarm-banner" id="alarmBanner">
+        <div class="alarm-banner-left">
+          <div class="alarm-pulse-ring">
+            <span class="alarm-icon-bell">🔔</span>
+          </div>
+          <div class="alarm-banner-text">
+            <h3 id="alarmBannerTitle">নামাজের ওয়াক্ত হয়েছে!</h3>
+            <p id="alarmBannerDesc">এখন আসরের সালাতের সময়। নামাজে প্রস্তুত হোন।</p>
+          </div>
+        </div>
+        <div class="alarm-banner-actions">
+          <button class="btn btn-secondary" id="btnSnoozeAlarm">৫ মিনিট স্নুজ</button>
+          <button class="btn btn-danger" id="btnStopAlarm">অ্যালার্ম বন্ধ করুন</button>
+        </div>
+      </div>
+
+      <!-- নিষিদ্ধ সময় সতর্কতা স্ট্রিপ -->
+      <div class="forbidden-alert-banner" id="forbiddenBanner">
+        <div class="forbidden-icon">⚠️</div>
+        <div class="forbidden-text">
+          <strong id="forbiddenReasonTitle">নামাজ নিষিদ্ধ সময়</strong>: 
+          <span id="forbiddenReasonDesc">বর্তমানে নামাজ আদায় করা মাকরূহে তাহরীমী (নিষিদ্ধ)।</span>
+        </div>
+      </div>
+
+      <!-- ট্যাব ১: হোম / ওয়াক্ত ও কাউন্টডাউন -->
+      <section class="tab-panel active" id="tab-home">
+        
+        <!-- কাউন্টডাউন হিরো সেকশন -->
+        <div class="hero-countdown-grid">
+          
+          <!-- বর্তমান ওয়াক্ত কার্ড -->
+          <div class="hero-card current-waqt-card">
+            <div class="card-badge-status" id="currentWaqtBadge">চলমান ওয়াক্ত</div>
+            <div class="card-content-wrap">
+              <div class="waqt-details">
+                <span class="label-sub">বর্তমান ওয়াক্ত</span>
+                <h1 class="current-waqt-title" id="currentWaqtName">যোহরের ওয়াক্ত</h1>
+                <div class="waqt-time-range" id="currentWaqtRange">
+                  দুপুর ১২:০০ হতে বিকাল ০৪:১৫ পর্যন্ত
+                </div>
+
+                <!-- ওয়াক্ত প্রগ্রেস বার -->
+                <div class="waqt-progress-container">
+                  <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="waqtProgressBar" style="width: 45%;"></div>
+                  </div>
+                  <div class="progress-labels">
+                    <span>শুরু: <strong id="progressStartTime">--:--</strong></span>
+                    <span id="progressPercentText">৪৫% অতিক্রান্ত</span>
+                    <span>শেষ: <strong id="progressEndTime">--:--</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- কাউন্টডাউন রিং ও ডিজিটাল ডিসপ্লে -->
+              <div class="countdown-circle-box">
+                <div class="digital-timer-display" id="currentWaqtCountdownDigits">
+                  ০০:২৫:১৪
+                </div>
+                <div class="countdown-caption">ওয়াক্ত শেষ হতে বাকি</div>
+                <div class="countdown-human-text" id="currentWaqtRemainingText">
+                  ২৫ মিনিট ১৪ সেকেন্ড
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- পরবর্তী ওয়াক্ত কার্ড -->
+          <div class="hero-card next-waqt-card">
+            <div class="next-card-header">
+              <div class="next-tag">পরবর্তী ওয়াক্ত</div>
+              <div class="next-prayer-name" id="nextWaqtName">আসর</div>
+            </div>
+
+            <div class="next-card-body">
+              <div class="next-start-time-box">
+                <span class="next-label">ওয়াক্ত শুরু হবে</span>
+                <div class="next-exact-time" id="nextWaqtExactTime">বিকাল ০৪:১৫ মিনিটে</div>
+              </div>
+
+              <div class="next-countdown-box">
+                <span class="next-label">শুরু হতে বাকি</span>
+                <div class="next-time-digits" id="nextWaqtStartsInDigits">০১:১০:৪৫</div>
+                <div class="next-time-human" id="nextWaqtStartsInText">০১ ঘণ্টা ১০ মিনিট ৪৫ সেকেন্ড</div>
+              </div>
+            </div>
+
+            <div class="next-card-footer">
+              <span class="footer-tip">🔔 ওয়াক্ত শুরু হওয়ামাত্র আজান ও অ্যালার্ম বেজে উঠবে</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- আজকের সকল ওয়াক্তের কুইক কার্ড গ্রিড -->
+        <div class="section-title-wrap">
+          <h2 class="section-heading">আজকের নামাজের ওয়াক্তসমূহ</h2>
+          <span class="section-subtext" id="currentDateFullBn">শুক্রবার, ২৯ আশ্বিন ১৪৩১</span>
+        </div>
+
+        <div class="waqt-grid" id="waqtGrid">
+          <!-- ফজর -->
+          <div class="waqt-card" id="card-fajr">
+            <div class="waqt-card-header">
+              <span class="waqt-name">ফজর</span>
+              <span class="waqt-alarm-badge" id="alarmBadge-fajr" title="অ্যালার্ম চালু">🔔</span>
+            </div>
+            <div class="waqt-time" id="time-fajr">ভোর ০৪:৪১</div>
+            <div class="waqt-status-tag" id="status-fajr">আসন্ন</div>
+          </div>
+
+          <!-- সূর্যোদয় -->
+          <div class="waqt-card is-forbidden" id="card-sunrise">
+            <div class="waqt-card-header">
+              <span class="waqt-name">সূর্যোদয় (ফজর শেষ)</span>
+              <span class="waqt-forbidden-pill">নিষিদ্ধ সময়</span>
+            </div>
+            <div class="waqt-time" id="time-sunrise">সকাল ০৫:৫৬</div>
+            <div class="waqt-status-tag" id="status-sunrise">১৫ মিনিট নামাজ বারণ</div>
+          </div>
+
+          <!-- ইশরাক ও চাশত -->
+          <div class="waqt-card" id="card-ishraq">
+            <div class="waqt-card-header">
+              <span class="waqt-name">ইশরাক ও চাশত</span>
+              <span class="waqt-sunnah-pill">নফল ওয়াক্ত</span>
+            </div>
+            <div class="waqt-time" id="time-ishraq">সকাল ০৬:১৫</div>
+            <div class="waqt-status-tag" id="status-ishraq">সূর্যোদয়ের পর</div>
+          </div>
+
+          <!-- যোহর -->
+          <div class="waqt-card" id="card-dhuhr">
+            <div class="waqt-card-header">
+              <span class="waqt-name">যোহর</span>
+              <span class="waqt-alarm-badge" id="alarmBadge-dhuhr" title="অ্যালার্ম চালু">🔔</span>
+            </div>
+            <div class="waqt-time" id="time-dhuhr">দুপুর ১১:৪৫</div>
+            <div class="waqt-status-tag" id="status-dhuhr">আসন্ন</div>
+          </div>
+
+          <!-- আসর -->
+          <div class="waqt-card" id="card-asr">
+            <div class="waqt-card-header">
+              <span class="waqt-name">আসর</span>
+              <span class="waqt-alarm-badge" id="alarmBadge-asr" title="অ্যালার্ম চালু">🔔</span>
+            </div>
+            <div class="waqt-time" id="time-asr">বিকাল ০৩:৫৪</div>
+            <div class="waqt-status-tag" id="status-asr">আসন্ন</div>
+          </div>
+
+          <!-- মাগরিব / ইফতার -->
+          <div class="waqt-card" id="card-maghrib">
+            <div class="waqt-card-header">
+              <span class="waqt-name">মাগরিব (ইফতার)</span>
+              <span class="waqt-alarm-badge" id="alarmBadge-maghrib" title="অ্যালার্ম চালু">🔔</span>
+            </div>
+            <div class="waqt-time" id="time-maghrib">বিকাল ০৫:৩২</div>
+            <div class="waqt-status-tag" id="status-maghrib">আসন্ন</div>
+          </div>
+
+          <!-- এশা -->
+          <div class="waqt-card" id="card-isha">
+            <div class="waqt-card-header">
+              <span class="waqt-name">এশা ও বিতর</span>
+              <span class="waqt-alarm-badge" id="alarmBadge-isha" title="অ্যালার্ম চালু">🔔</span>
+            </div>
+            <div class="waqt-time" id="time-isha">সন্ধ্যা ০৬:৪৭</div>
+            <div class="waqt-status-tag" id="status-isha">আসন্ন</div>
+          </div>
+
+          <!-- তাহাজ্জুদ -->
+          <div class="waqt-card" id="card-tahajjud">
+            <div class="waqt-card-header">
+              <span class="waqt-name">তাহাজ্জুদ</span>
+              <span class="waqt-sunnah-pill">রাতের শেষ তৃতীয়াংশ</span>
+            </div>
+            <div class="waqt-time" id="time-tahajjud">রাত ০১:২০</div>
+            <div class="waqt-status-tag" id="status-tahajjud">মোস্তাহাব সময়</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ট্যাব ২: আজকের সম্পূর্ণ সূচি ও ক্যালেন্ডার -->
+      <section class="tab-panel" id="tab-calendar">
+        <div class="section-title-wrap">
+          <h2 class="section-heading">দৈনিক ও অতিরিক্ত সালাত তালিকা</h2>
+          <span class="section-subtext">ফরজ, সুন্নাত ও নিষিদ্ধ ওয়াক্তসমূহের বিস্তারিত সময়</span>
+        </div>
+
+        <div class="table-card">
+          <table class="prayer-table">
+            <thead>
+              <tr>
+                <th>ওয়াক্ত ও পর্যায়</th>
+                <th>শুরুর সময়</th>
+                <th>সমাপ্তির সময়</th>
+                <th>ওয়াক্তের মর্যাদা</th>
+                <th>অ্যালার্ম স্ট্যাটাস</th>
+              </tr>
+            </thead>
+            <tbody id="detailedTableBody">
+              <!-- JS দ্বারা ডায়নামিকভাবে তৈরি হবে -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="prayer-tips-box">
+          <h3>📌 গুরুত্বপূর্ণ মাসায়েল ও করণীয়:</h3>
+          <ul>
+            <li><strong>নামাজের ৩টি নিষিদ্ধ সময়:</strong> ১. ঠিক সূর্যোদয়ের সময়, ২. ঠিক দুপুর বেলা সূর্য মধ্যাকাশে থাকাকালীন সময়, ৩. ঠিক সূর্যাস্তের সময়। এ সময় কোনো নামাজ পড়া বা সাজদা করা জায়েজ নেই।</li>
+            <li><strong>আসরের নামাজ:</strong> সূর্যাস্তের পূর্বে হলুদ বর্ণের রোদ পড়ার আগেই আসরের সালাত আদায় করে নেওয়া উত্তম।</li>
+            <li><strong>সাহরির সতর্কতামূলক সময়:</strong> সুবহে সাদিক / ফজর শুরু হওয়ার পূর্বে খাবার শেষ করে মুখ পরিষ্কার করা জরুরি।</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ট্যাব ৩: কিবলা কম্পাস -->
+      <section class="tab-panel" id="tab-qibla">
+        <div class="section-title-wrap">
+          <h2 class="section-heading">পবিত্র কাবার কিবলা দিক</h2>
+          <span class="section-subtext">আপনার বর্তমান অবস্থান থেকে কিবলার সঠিক কম্পাস দিক</span>
+        </div>
+
+        <div class="qibla-container">
+          <div class="compass-wrapper">
+            <div class="compass-dial">
+              <div class="compass-degree-labels">
+                <span class="compass-n">উ (০°)</span>
+                <span class="compass-e">পূ (৯০°)</span>
+                <span class="compass-s">দ (১৮০°)</span>
+                <span class="compass-w">প (২৭০°)</span>
+              </div>
+              <div class="compass-needle" id="qiblaNeedle" style="transform: rotate(277deg);">
+                <div class="needle-pointer"></div>
+                <div class="kaaba-icon-pin">🕋</div>
+              </div>
+              <div class="compass-center-dot"></div>
+            </div>
+          </div>
+
+          <div class="qibla-info-card">
+            <h3>কিবলার কোণ</h3>
+            <div class="qibla-angle-value" id="qiblaAngleText">২৭৮° পশ্চিম-উত্তর-পশ্চিম</div>
+            <p class="qibla-note">
+              বাংলাদেশ থেকে কিবলা সাধারণত প্রায় <strong>২৭৭° থেকে ২৮১°</strong> ডিগ্রিতে অবস্থিত (পশ্চিম দিক থেকে সামান্য উত্তর দিকে)।
+            </p>
+            <div class="qibla-city-note">
+              বর্তমান অবস্থান: <strong id="qiblaLocationName">ঢাকা, বাংলাদেশ</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ট্যাব ৪: সেটিংস প্যানেল -->
+      <section class="tab-panel" id="tab-settings">
+        <div class="section-title-wrap">
+          <h2 class="section-heading">অ্যাপ সেটিংস</h2>
+          <span class="section-subtext">লোকেশন, টাইমজোন, অ্যালার্ম ও অন্যান্য পছন্দ পরিবর্তন করুন</span>
+        </div>
+
+        <div class="settings-grid">
+          
+          <!-- ১. লোকেশন সেটিংস কার্ড -->
+          <div class="settings-card">
+            <div class="card-title-icon">
+              <span class="setting-icon">📍</span>
+              <h3>লোকেশন নির্বাচন (স্থান)</h3>
+            </div>
+            
+            <div class="setting-group">
+              <label for="selectDivision">বিভাগ সিলেক্ট করুন:</label>
+              <select id="selectDivision" class="form-control">
+                <option value="all">সকল বিভাগ (৬৪ জেলা)</option>
+                <option value="ঢাকা" selected>ঢাকা বিভাগ</option>
+                <option value="চট্টগ্রাম">চট্টগ্রাম বিভাগ</option>
+                <option value="রাজশাহী">রাজশাহী বিভাগ</option>
+                <option value="খুলনা">খুলনা বিভাগ</option>
+                <option value="বরিশাল">বরিশাল বিভাগ</option>
+                <option value="সিলেট">সিলেট বিভাগ</option>
+                <option value="রংপুর">রংপুর বিভাগ</option>
+                <option value="ময়মনসিংহ">ময়মনসিংহ বিভাগ</option>
+              </select>
+            </div>
+
+            <div class="setting-group">
+              <label for="selectDistrict">জেলা / শহর নির্বাচন:</label>
+              <select id="selectDistrict" class="form-control">
+                <!-- জেলাগুলো JS দ্বারা লোড হবে -->
+              </select>
+            </div>
+
+            <div class="setting-group">
+              <label for="selectInternational">অথবা আন্তর্জাতিক শহর:</label>
+              <select id="selectInternational" class="form-control">
+                <option value="">-- বাংলাদেশ ব্যতীত অন্যান্য শহর --</option>
+                <!-- আন্তর্জাতিক শহর লোড হবে -->
+              </select>
+            </div>
+
+            <div class="setting-group-action">
+              <button class="btn btn-primary" id="btnAutoLocation">
+                <span>🛰️</span> আমার অটো জিপিএস লোকেশন নিন
+              </button>
+            </div>
+
+            <div class="custom-coords-toggle">
+              <a href="#" id="toggleCustomCoords">কাস্টম অক্ষাংশ ও দ্রাঘিমাংশ দিন...</a>
+              <div class="custom-coords-fields hidden" id="customCoordsFields">
+                <div class="input-row">
+                  <div>
+                    <label>অক্ষাংশ (Latitude):</label>
+                    <input type="number" step="0.0001" id="inputCustomLat" class="form-control" placeholder="23.8103">
+                  </div>
+                  <div>
+                    <label>দ্রাঘিমাংশ (Longitude):</label>
+                    <input type="number" step="0.0001" id="inputCustomLng" class="form-control" placeholder="90.4125">
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-secondary" id="btnApplyCustomCoords">কাস্টম কোঅর্ডিনেট প্রয়োগ</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ২. টাইমজোন সেটিংস কার্ড -->
+          <div class="settings-card">
+            <div class="card-title-icon">
+              <span class="setting-icon">🌐</span>
+              <h3>টাইমজোন অপশন</h3>
+            </div>
+
+            <div class="setting-group">
+              <label for="selectTimezone">টাইমজোন সিলেক্ট করুন:</label>
+              <select id="selectTimezone" class="form-control">
+                <!-- টাইমজোন লোড হবে -->
+              </select>
+              <div class="field-hint">ওয়াক্তের সময় এই টাইমজোন অনুযায়ী প্রদর্শিত হবে।</div>
+            </div>
+
+            <div class="setting-group-action">
+              <button class="btn btn-secondary" id="btnAutoTimezone">
+                <span>🕒</span> ডিভাইসের টাইমজোন ব্যবহার করুন
+              </button>
+            </div>
+
+            <div class="timezone-status-card">
+              <span class="tz-status-label">নির্বাচিত টাইমজোন ঘড়ি:</span>
+              <div class="tz-live-clock" id="tzLiveClock">--:--:--</div>
+            </div>
+          </div>
+
+          <!-- ৩. অ্যালার্ম ও আজান সেটিংস কার্ড -->
+          <div class="settings-card full-width">
+            <div class="card-title-icon">
+              <span class="setting-icon">🔔</span>
+              <h3>অ্যালার্ম ও সাউন্ড সেটিংস</h3>
+            </div>
+
+            <div class="settings-subgrid">
+              <div class="sub-col">
+                <div class="setting-toggle-row">
+                  <div>
+                    <strong>ওয়াক্তের অ্যালার্ম চালু রাখুন</strong>
+                    <div class="field-hint">ওয়াক্ত শুরু হলে স্বয়ংক্রিয় সাউন্ড প্লে হবে</div>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="toggleMasterAlarm" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="setting-toggle-row">
+                  <div>
+                    <strong>উইন্ডোজ ডেস্কটপ নোটিফিকেশন</strong>
+                    <div class="field-hint">স্ক্রিনের নিচে পপআপ নোটিফিকেশন আসবে</div>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="toggleDesktopNotification" checked>
+                    <span class="slider round"></span>
+                  </label>
+                </div>
+
+                <div class="setting-group">
+                  <label for="selectSoundTone">অ্যালার্মের সুর / টোন:</label>
+                  <select id="selectSoundTone" class="form-control">
+                    <option value="adhan">আজান মেলোডি (তাকবীর সুর)</option>
+                    <option value="gong">প্রশান্তিময় মসজিদের গং / বেল</option>
+                    <option value="chime">মধুর ইসলামিক সুর (Chime)</option>
+                    <option value="beep">ডিজিটাল অ্যালার্ম বিপ</option>
+                  </select>
+                </div>
+
+                <div class="setting-group">
+                  <label for="inputVolume">ভলিউম নিয়ন্ত্রণ: <span id="volumePercentText">৮০%</span></label>
+                  <input type="range" id="inputVolume" min="0" max="100" value="80" class="volume-slider">
+                </div>
+
+                <div class="sound-test-row">
+                  <button class="btn btn-primary" id="btnTestSound">
+                    <span id="btnTestSoundIcon">🔊</span> <span id="btnTestSoundText">সাউন্ড টেস্ট করুন</span>
+                  </button>
+                  <button class="btn btn-secondary" id="btnStopSoundTest">থামান</button>
+                </div>
+              </div>
+
+              <div class="sub-col">
+                <label>ওয়াক্ত অনুযায়ী আলাদা অ্যালার্ম নির্বাচন:</label>
+                <div class="prayer-alarm-checkboxes">
+                  <label class="alarm-check-item">
+                    <input type="checkbox" id="alarmCheck-fajr" checked>
+                    <span>ফজর ওয়াক্ত</span>
+                  </label>
+                  <label class="alarm-check-item">
+                    <input type="checkbox" id="alarmCheck-dhuhr" checked>
+                    <span>যোহর ওয়াক্ত</span>
+                  </label>
+                  <label class="alarm-check-item">
+                    <input type="checkbox" id="alarmCheck-asr" checked>
+                    <span>আসর ওয়াক্ত</span>
+                  </label>
+                  <label class="alarm-check-item">
+                    <input type="checkbox" id="alarmCheck-maghrib" checked>
+                    <span>মাগরিব ওয়াক্ত</span>
+                  </label>
+                  <label class="alarm-check-item">
+                    <input type="checkbox" id="alarmCheck-isha" checked>
+                    <span>এশা ওয়াক্ত</span>
+                  </label>
+                </div>
+
+                <div class="setting-group mt-3">
+                  <label for="selectPreAlarm">ওয়াক্ত শুরুর কতক্ষণ আগে অগ্রিম সংকেত চান?</label>
+                  <select id="selectPreAlarm" class="form-control">
+                    <option value="0">কোনো অগ্রিম সংকেত নেই (ঠিক ওয়াক্তে)</option>
+                    <option value="5">৫ মিনিট পূর্বে সতর্কতা</option>
+                    <option value="10" selected>১০ মিনিট পূর্বে সতর্কতা</option>
+                    <option value="15">১৫ মিনিট পূর্বে সতর্কতা</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ৪. পদ্ধতি ও সংখ্যা সেটিংস -->
+          <div class="settings-card">
+            <div class="card-title-icon">
+              <span class="setting-icon">🕌</span>
+              <h3>ক্যালকুলেশন পদ্ধতি ও মাজহাব</h3>
+            </div>
+
+            <div class="setting-group">
+              <label for="selectMethod">ক্যালকুলেশন মেথড:</label>
+              <select id="selectMethod" class="form-control">
+                <option value="Karachi" selected>ইসলামিক ফাউন্ডেশন বাংলাদেশ / করাচি (হানাফী)</option>
+                <option value="MuslimWorldLeague">মুসলিম ওয়ার্ল্ড লীগ (মক্কা)</option>
+                <option value="UmmAlQura">উম্মুল কুরা বিশ্ববিদ্যালয় (সৌদি আরব)</option>
+                <option value="Egyptian">মিশরীয় জেনারেল অথরিটি</option>
+                <option value="Dubai">দুবাই / সংযুক্ত আরব আমিরাত</option>
+                <option value="NorthAmerica">ইসলামিক সোসাইটি অব নর্থ আমেরিকা (ISNA)</option>
+              </select>
+            </div>
+
+            <div class="setting-group">
+              <label for="selectMadhab">আসরের ওয়াক্তের মাজহাব:</label>
+              <select id="selectMadhab" class="form-control">
+                <option value="Hanafi" selected>হানাফী (ছায়া দ্বিগুণ - বাংলাদেশে সর্বাধিক প্রচলিত)</option>
+                <option value="Shafi">শাফেঈ, মালেকী ও হাম্বলী (ছায়া এক গুণ)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ৫. ডিসপ্লে ও সিস্টেম প্রেফারেন্স -->
+          <div class="settings-card">
+            <div class="card-title-icon">
+              <span class="setting-icon">⚙️</span>
+              <h3>ডিসপ্লে ও সিস্টেম ট্রে</h3>
+            </div>
+
+            <div class="setting-toggle-row">
+              <div>
+                <strong>বাংলা সংখ্যা ব্যবহার করুন</strong>
+                <div class="field-hint">ঘড়ির সংখ্যা বাংলায় (০, ১, ২...) বা ইংরেজিতে (0, 1, 2...)</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggleBanglaDigits" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="setting-toggle-row">
+              <div>
+                <strong>ক্লোজ করলে সিস্টেম ট্রে-তে রাখুন</strong>
+                <div class="field-hint">অ্যাপ ব্যাকগ্রাউন্ডে থেকে সর্বদা অ্যালার্ম বজায় রাখবে</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="toggleTrayOnClose" checked disabled>
+                <span class="slider round"></span>
+              </label>
+            </div>
+
+            <div class="setting-group-action mt-4">
+              <button class="btn btn-secondary w-100" id="btnResetSettings">
+                ডিফল্ট সেটিংসে ফিরিয়ে নিন
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- স্ক্রিপ্টসমূহ -->
+  <script src="../data/districts.js"></script>
+  <script src="../data/timezones.js"></script>
+  <script src="../audio/sounds.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

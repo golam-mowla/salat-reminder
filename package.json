@@ -1,10 +1,11 @@
 {
   "name": "salat-reminder",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "আধুনিক ও দ্রুত বাংলা সালাত রিমাইন্ডার এবং ওয়াক্ত ট্র্যাকার ডেস্কটপ অ্যাপ",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "generate-icons": "node scripts/generate-icons.js"
   },
   "keywords": [],
   "author": "",
