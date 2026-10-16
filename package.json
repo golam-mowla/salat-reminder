@@ -1,20 +1,55 @@
 {
   "name": "salat-reminder",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "আধুনিক ও দ্রুত বাংলা সালাত রিমাইন্ডার এবং ওয়াক্ত ট্র্যাকার ডেস্কটপ অ্যাপ",
   "main": "main.js",
+  "author": "Golam Mowla",
+  "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "generate-icons": "node scripts/generate-icons.js"
+    "generate-icons": "node scripts/generate-icons.js",
+    "dist": "electron-builder --win nsis portable zip",
+    "dist:portable": "electron-builder --win portable",
+    "dist:all": "electron-builder --win nsis portable zip"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "build": {
+    "appId": "com.golammowla.salatreminder",
+    "productName": "Salat-Reminder",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "assets/**/*",
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "portable",
+        "nsis",
+        "zip"
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "সালাত রিমাইন্ডার",
+      "artifactName": "${productName}-${version}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
+    }
+  },
   "dependencies": {
     "adhan": "^4.4.6"
   },
   "devDependencies": {
-    "electron": "^44.8.0"
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3"
   }
 }
