@@ -50,7 +50,18 @@
 
 ---
 
-## 🚀 ইন্সটলেশন ও রান করার নিয়ম (How to Run)
+## 📥 সরাসরি ডাউনলোড (Download Releases - v0.1)
+
+সর্বশেষ সংস্করণ **v0.1** ডাউনলোড করুন:
+- 🚀 **[পোর্টেবল এক্সিকিউটেবল (Portable .exe)](https://github.com/golam-mowla/salat-reminder/releases/download/v0.1/Salat-Reminder-0.1.0-portable.exe)** — *কোনো ইন্সটলেশনের প্রয়োজন নেই, শুধু ডাউনলোড করে ডাবল-ক্লিক করলেই চলবে।*
+- 💻 **[উইন্ডোজ সেটআপ ইনস্টলার (Setup Installer .exe)](https://github.com/golam-mowla/salat-reminder/releases/download/v0.1/Salat-Reminder-0.1.0-setup.exe)** — *স্টার্ট মেনু ও ডেস্কটপ শর্টকাটসহ উইন্ডোজে ইন্সটল করুন।*
+- 📦 **[কমপ্লিট জিপ প্যাকেজ (Standalone .zip)](https://github.com/golam-mowla/salat-reminder/releases/download/v0.1/Salat-Reminder-0.1.0-win.zip)** — *আনজিপ করে সরাসরি ব্যবহারের জন্য।*
+
+🔗 **সব রিলিজ দেখতে**: [GitHub Releases v0.1](https://github.com/golam-mowla/salat-reminder/releases/tag/v0.1)
+
+---
+
+## 🚀 ইন্সটলেশন ও রান করার নিয়ম (For Developers)
 
 ### পূর্বশর্ত:
 - [Node.js](https://nodejs.org/) (সংস্করণ ১৮ বা তার বেশি)
